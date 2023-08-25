@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include "open62541.h"
 #include <iostream>
+#include <windows.h>
+#include <wininet.h>
+#include <tchar.h>
+#include <string.h>
 
 #pragma warning(disable : 4996)
 

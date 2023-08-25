@@ -131,8 +131,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\testbuilddd\open62541.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="open62541.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="open62541.h" />
