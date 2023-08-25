@@ -5,6 +5,8 @@
 #include <wininet.h>
 #include <tchar.h>
 #include <string.h>
+#include "ProductionData.hpp"
+#include "WriteDataToPLC.hpp"
 
 #pragma warning(disable : 4996)
 
@@ -48,5 +50,5 @@ int main(void) {
     UA_Client_delete(client); /* Disconnects the client internally */
 
     system("pause");
-    return UA_STATUSCODE_GOOD;
+    return 0;
 }

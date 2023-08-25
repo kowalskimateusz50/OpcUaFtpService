@@ -21,9 +21,18 @@
     <ClCompile Include="open62541.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WriteDataToPLC.hpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WriteDataToPLC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="open62541.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ProductionData.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

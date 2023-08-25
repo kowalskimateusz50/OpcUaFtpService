@@ -133,9 +133,12 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="open62541.c" />
+    <ClCompile Include="WriteDataToPLC.cpp" />
+    <ClCompile Include="WriteDataToPLC.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="open62541.h" />
+    <ClInclude Include="ProductionData.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
