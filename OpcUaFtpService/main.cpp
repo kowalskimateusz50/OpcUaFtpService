@@ -79,7 +79,7 @@ int main(void) {
     /* Get from user data to write */
     std::cout << "\nType some integer value: ";
     std::cin >> DataToWrite;
-
+     
     PLC.Write(DataToWrite);
     PLC.CleanUp();
 

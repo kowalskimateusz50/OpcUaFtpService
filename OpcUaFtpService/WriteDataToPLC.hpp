@@ -12,6 +12,7 @@ public:
 
 	int InitOpcUaServerConnection(std::string ServerAdress); //Init server connection function
 	int Write(int16_t ValueToWrite);
+	void ManualInputData(ProductionData& Data);
 	void CleanUp();
 
 };

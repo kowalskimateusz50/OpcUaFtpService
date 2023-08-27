@@ -68,3 +68,25 @@ void WriteDataToPLC::CleanUp()
 {
     UA_Client_delete(client);
 }
+
+/* Function only for manual test purpose 
+* @param: Production data
+* @return: NULL
+*/
+
+void WriteDataToPLC::ManualInputData(ProductionData& Data)
+{
+    /* Input of work order number */
+    std::cout << "\nEnter Work Order Number: ";
+    std::cin >> Data.WorkOrderNumber;
+    /* Input of production line number */
+    std::cout << "\nEnter Production Line Number: ";
+    std::cin >> Data.ProductionLineNumber;
+    /* Input of production item ean */
+    std::cout << "\nEnter Production Item Ean: ";
+    std::cin >> Data.ProductionItemEan;
+    /* Input of production item ean */
+    std::cout << "\nEnter Production Item Ean: ";
+    std::cin >> Data.ProductionItemEan;
+
+}
