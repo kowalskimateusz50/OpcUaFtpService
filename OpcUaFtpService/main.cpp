@@ -1,8 +1,5 @@
 #pragma warning(disable : 4996)
 
-
-
-
 #include <stdio.h>
 #include "open62541.h"
 #include <iostream>
@@ -74,13 +71,16 @@ int main(void) {
     WriteDataToPLC PLC;
 
     /* Initialize server connection */
+    std::cout << "\PLC.InitOpcUaServerConnection() function starting: ";
     PLC.InitOpcUaServerConnection(SERVER_ADRESS);
 
     /* Get from user data to write */
-    std::cout << "\nType some integer value: ";
-    std::cin >> DataToWrite;
-     
-    PLC.Write(DataToWrite);
+   // std::cout << "\nType some integer value: ";
+    //std::cin >> DataToWrite;
+    std::cout << "\nPLC.Write() function starting: ";
+    PLC.Write(ProdData);
+
+    std::cout << "\nPLC.CleanUp() function starting: ";
     PLC.CleanUp();
 
 

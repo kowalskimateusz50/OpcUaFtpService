@@ -1,3 +1,4 @@
+#pragma once
 #include <iostream>
 #include <string.h>
 #include "open62541.h"
@@ -11,7 +12,8 @@ private:
 public:
 
 	int InitOpcUaServerConnection(std::string ServerAdress); //Init server connection function
-	int Write(int16_t ValueToWrite);
+	void StringToUAString(std::string& StrToConvert, UA_String& StrConverted);
+	int Write(ProductionData& Data);
 	void ManualInputData(ProductionData& Data);
 	void CleanUp();
 

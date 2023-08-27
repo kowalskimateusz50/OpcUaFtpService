@@ -7,8 +7,7 @@
 * @param: string server adress 
 * @return: Server initialization status code 
 */
-int WriteDataToPLC::InitOpcUaServerConnection(std::string ServerAdress)
-{
+int WriteDataToPLC::InitOpcUaServerConnection(std::string ServerAdress) {
     /* Convert server adress to c_tring */
     char* CstrServerAdress = new char[ServerAdress.length() + 1];
     strcpy_s(CstrServerAdress, ServerAdress.length() + 1, ServerAdress.c_str());
@@ -25,8 +24,7 @@ int WriteDataToPLC::InitOpcUaServerConnection(std::string ServerAdress)
         ServerConnectionStatus = (int)retval;
         return (int)retval;
     }
-    else
-    {
+    else {
         std::cout << "\nLog: OpcUa Server connection initialization successful: ";
     }
     /* Save server connection status */
@@ -35,20 +33,49 @@ int WriteDataToPLC::InitOpcUaServerConnection(std::string ServerAdress)
     return 0;
 }
 
-int WriteDataToPLC::Write(int16_t ValueToWrite)
-{
+/* Function to convert input std::String type to UA_String type
+* @param: StrToConvert -> Input string to convert
+* @param: StrConverted -> Output string converted
+* @return: status of conversion
+*/
+
+void WriteDataToPLC::StringToUAString(std::string& StrToConvert, UA_String& StrConverted) {
+
+    /* Write length of input string */
+    StrConverted.length = StrToConvert.length();
+
+    /* Define temp char's array */
+    char* ConvertArray = new char[StrToConvert.length() + 1];
+    UA_Byte* ConvertByteArray = new UA_Byte[StrToConvert.length() + 1];
+
+    // copying the contents of the
+    // string to char array
+    strcpy_s(ConvertArray, StrToConvert.length() + 1, StrToConvert.c_str());
+
+    for (int i = 0; i < StrToConvert.length(); i++) {
+        ConvertByteArray[i] = (UA_Byte)(ConvertArray[i]);
+    }
+    StrConverted.data = ConvertByteArray;
+}
+
+int WriteDataToPLC::Write(ProductionData& Data) {
     int ret;
 
-    UA_Int16 WriteValue = ValueToWrite;
+    std::string WriteString = "TestWritee";
 
-    std::cout << "\nWrite to PLC function CALL, variable value is: " << ValueToWrite << std::endl;
-    /* Read the value attribute of the node. UA_Client_readValueAttribute is a
-     * wrapper for the raw read service available as UA_Client_Service_read. */
+    std::cout << "\nWrite to PLC function CALL, string value is: " << WriteString << std::endl;
+
+    UA_String WriteUaString;
+    /* Convert string data type to UA_String */
+    StringToUAString(WriteString, WriteUaString);
+
     UA_Variant value; /* Variants can hold scalar values and arrays of any type */
+
     UA_Variant_init(&value);
-    UA_Variant_setScalar(&value, &WriteValue, &UA_TYPES[UA_TYPES_INT16]);
+    UA_Variant_setScalar(&value, &WriteUaString, &UA_TYPES[UA_TYPES_STRING]);
     /* NodeId of the variable holding the current time */
-    const UA_NodeId nodeId = UA_NODEID_STRING(3, (char*)"\"dbOpcUaTest\".\"OpcInt\"");
+    const UA_NodeId nodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"BatchNo\"");
+    //const UA_NodeId nodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"BatchNo\"");
     ret = UA_Client_writeValueAttribute(client, nodeId, &value);
 
     std::cout << "\nLOG: Variable write result: " << (int)ret << std::endl;
@@ -64,8 +91,7 @@ int WriteDataToPLC::Write(int16_t ValueToWrite)
 * @return: NULL
 */
 
-void WriteDataToPLC::CleanUp()
-{
+void WriteDataToPLC::CleanUp(){
     UA_Client_delete(client);
 }
 
@@ -74,8 +100,7 @@ void WriteDataToPLC::CleanUp()
 * @return: NULL
 */
 
-void WriteDataToPLC::ManualInputData(ProductionData& Data)
-{
+void WriteDataToPLC::ManualInputData(ProductionData& Data){
     /* Input of work order number */
     std::cout << "\nEnter Work Order Number: ";
     std::cin >> Data.WorkOrderNumber;
@@ -85,8 +110,12 @@ void WriteDataToPLC::ManualInputData(ProductionData& Data)
     /* Input of production item ean */
     std::cout << "\nEnter Production Item Ean: ";
     std::cin >> Data.ProductionItemEan;
-    /* Input of production item ean */
-    std::cout << "\nEnter Production Item Ean: ";
-    std::cin >> Data.ProductionItemEan;
+    /* Input of production item sku */
+    std::cout << "\nEnter Production Item Sku: ";
+    std::cin >> Data.ProductionItemSku;
+    /* Input of production batch no */
+    std::cout << "\nEnter Production batch no: ";
+    std::cin >> Data.ProductionBatchNo;
 
 }
+
