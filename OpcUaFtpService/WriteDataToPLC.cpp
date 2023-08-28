@@ -59,28 +59,103 @@ void WriteDataToPLC::StringToUAString(std::string& StrToConvert, UA_String& StrC
 }
 
 int WriteDataToPLC::Write(ProductionData& Data) {
-    int ret;
 
-    std::string WriteString = "TestWritee";
+    int ret; /* Error code handler */
 
-    std::cout << "\nWrite to PLC function CALL, string value is: " << WriteString << std::endl;
+    /*------------------- Write Work order number -------------------------------*/
+    UA_String UaWorkOrderNo; /* Write string variable */
+    UA_Variant WorkOrderNoValue; /* Variants can hold scalar values and arrays of any type */
 
-    UA_String WriteUaString;
     /* Convert string data type to UA_String */
-    StringToUAString(WriteString, WriteUaString);
+    StringToUAString(Data.WorkOrderNumber, UaWorkOrderNo);
+    UA_Variant_init(&WorkOrderNoValue);
+    UA_Variant_setScalar(&WorkOrderNoValue, &UaWorkOrderNo, &UA_TYPES[UA_TYPES_STRING]);
 
-    UA_Variant value; /* Variants can hold scalar values and arrays of any type */
+    /* NodeId of the variable holding the work order number */
+    const UA_NodeId WorkOrderNoNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"WorkOrderNo\"");
+    ret = UA_Client_writeValueAttribute(client, WorkOrderNoNodeId, &WorkOrderNoValue);
 
-    UA_Variant_init(&value);
-    UA_Variant_setScalar(&value, &WriteUaString, &UA_TYPES[UA_TYPES_STRING]);
-    /* NodeId of the variable holding the current time */
-    const UA_NodeId nodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"BatchNo\"");
-    //const UA_NodeId nodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"BatchNo\"");
-    ret = UA_Client_writeValueAttribute(client, nodeId, &value);
+    std::cout << "\nLOG: Work order number write result: " << (int)ret << std::endl;
+    UA_Variant_deleteMembers(&WorkOrderNoValue);
 
-    std::cout << "\nLOG: Variable write result: " << (int)ret << std::endl;
+    /*------------------- Write Porduction line number ----------------*/
+    UA_String UaProdLineNo; /* Write string variable */
+    UA_Variant ProdLineNoValue; /* Variants can hold scalar values and arrays of any type */
 
-    UA_Variant_deleteMembers(&value);
+    /* Convert string data type to UA_String */
+    StringToUAString(Data.ProductionLineNumber, UaProdLineNo);
+    UA_Variant_init(&ProdLineNoValue);
+    UA_Variant_setScalar(&ProdLineNoValue, &UaProdLineNo, &UA_TYPES[UA_TYPES_STRING]);
+
+    /* NodeId of the variable holding the production line number */
+    const UA_NodeId ProdLineNoNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"ProductionLineNumber\"");
+    ret = UA_Client_writeValueAttribute(client, ProdLineNoNodeId, &ProdLineNoValue);
+
+    std::cout << "\nLOG: Prod line number write result: " << (int)ret << std::endl;
+    UA_Variant_deleteMembers(&ProdLineNoValue);
+
+    /*------------------- Write Porduction item ean ----------------*/
+    UA_String UaProdItemEan; /* Write string variable */
+    UA_Variant ProdItemEanValue; /* Variants can hold scalar values and arrays of any type */
+
+    /* Convert string data type to UA_String */
+    StringToUAString(Data.ProductionItemEan, UaProdItemEan);
+    UA_Variant_init(&ProdItemEanValue);
+    UA_Variant_setScalar(&ProdItemEanValue, &UaProdItemEan, &UA_TYPES[UA_TYPES_STRING]);
+
+    /* NodeId of the variable holding the production item ean */
+    const UA_NodeId ProdItemEanNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"EAN\"");
+    ret = UA_Client_writeValueAttribute(client, ProdItemEanNodeId, &ProdItemEanValue);
+
+    std::cout << "\nLOG: Prod line item ean write result: " << (int)ret << std::endl;
+    UA_Variant_deleteMembers(&ProdItemEanValue);
+    return ret;
+
+    /*------------------- Write Porduction item sku ----------------*/
+    UA_String UaProdItemSku; /* Write string variable */
+    UA_Variant ProdItemSkuValue; /* Variants can hold scalar values and arrays of any type */
+
+    /* Convert string data type to UA_String */
+    StringToUAString(Data.ProductionItemSku, UaProdItemSku);
+    UA_Variant_init(&ProdItemSkuValue);
+    UA_Variant_setScalar(&ProdItemSkuValue, &UaProdItemSku, &UA_TYPES[UA_TYPES_STRING]);
+
+    /* NodeId of the variable holding the production item sku */
+    const UA_NodeId ProdItemSkuNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"SKU_code\"");
+    ret = UA_Client_writeValueAttribute(client, ProdItemSkuNodeId, &ProdItemSkuValue);
+
+    std::cout << "\nLOG: Prod line item sku write result: " << (int)ret << std::endl;
+    UA_Variant_deleteMembers(&ProdItemSkuValue);
+
+    /*------------------- Write Porduction batch number ----------------*/
+    UA_String UaProdBatchNo; /* Write string variable */
+    UA_Variant ProdBatchNoValue; /* Variants can hold scalar values and arrays of any type */
+
+    /* Convert string data type to UA_String */
+    StringToUAString(Data.ProductionBatchNo, UaProdBatchNo);
+    UA_Variant_init(&ProdBatchNoValue);
+    UA_Variant_setScalar(&ProdBatchNoValue, &UaProdBatchNo, &UA_TYPES[UA_TYPES_STRING]);
+
+    /* NodeId of the variable holding the production item sku */
+    const UA_NodeId ProdBatchNoNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"BatchNo\"");
+    ret = UA_Client_writeValueAttribute(client, ProdBatchNoNodeId, &ProdBatchNoValue);
+
+    std::cout << "\nLOG: Prod batch number write result: " << (int)ret << std::endl;
+    UA_Variant_deleteMembers(&ProdBatchNoValue);
+
+    /*------------------- Write Work order quantity --------------*/
+    UA_Int16 UaWorkOrderQuantity; /* Write string variable */
+    UA_Variant WorkOrderQuantityValue; /* Variants can hold scalar values and arrays of any type */
+
+    UA_Variant_init(&WorkOrderQuantityValue);
+    UA_Variant_setScalar(&WorkOrderQuantityValue, &UaWorkOrderQuantity, &UA_TYPES[UA_TYPES_INT16]);
+
+    /* NodeId of the variable holding the production item sku */
+    const UA_NodeId WorkOrderQuantityId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"BatchNo\"");
+    ret = UA_Client_writeValueAttribute(client, WorkOrderQuantityId, &WorkOrderQuantityValue);
+
+    std::cout << "\nLOG: Work order quantity write result: " << (int)ret << std::endl;
+    UA_Variant_deleteMembers(&WorkOrderQuantityValue);
 
     return ret;
 }
@@ -100,22 +175,5 @@ void WriteDataToPLC::CleanUp(){
 * @return: NULL
 */
 
-void WriteDataToPLC::ManualInputData(ProductionData& Data){
-    /* Input of work order number */
-    std::cout << "\nEnter Work Order Number: ";
-    std::cin >> Data.WorkOrderNumber;
-    /* Input of production line number */
-    std::cout << "\nEnter Production Line Number: ";
-    std::cin >> Data.ProductionLineNumber;
-    /* Input of production item ean */
-    std::cout << "\nEnter Production Item Ean: ";
-    std::cin >> Data.ProductionItemEan;
-    /* Input of production item sku */
-    std::cout << "\nEnter Production Item Sku: ";
-    std::cin >> Data.ProductionItemSku;
-    /* Input of production batch no */
-    std::cout << "\nEnter Production batch no: ";
-    std::cin >> Data.ProductionBatchNo;
 
-}
 

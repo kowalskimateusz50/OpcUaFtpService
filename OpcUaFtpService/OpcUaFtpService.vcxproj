@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="open62541.c" />
+    <ClCompile Include="ProductionData.cpp" />
     <ClCompile Include="WriteDataToPLC.cpp" />
     <ClCompile Include="WriteDataToPLC.hpp" />
   </ItemGroup>

@@ -16,74 +16,40 @@
 #define SERVER_ADRESS "opc.tcp://192.168.10.10:4840"
 
 int main(void) {
-    //Test
-    //int ReadValue = 9999;
-    /*
-    UA_Client* client = UA_Client_new();
-    UA_ClientConfig_setDefault(UA_Client_getConfig(client));
-    UA_StatusCode retval = UA_Client_connect(client, SERVER_ADRESS);
-
-    if (retval != UA_STATUSCODE_GOOD) {
-        UA_Client_delete(client);
-        return (int)retval;
-    }
-    */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-   // if (retval == UA_STATUSCODE_GOOD &&
-       // UA_Variant_hasScalarType(&value, &UA_TYPES[UA_TYPES_INT16])) {
-        //ReadValue = *(UA_Int16*)value.data;
-        //UA_DateTime raw_date = *(UA_DateTime *) value.data;
-         //UA_DateTimeStruct dts = UA_DateTime_toStruct(raw_date);
-         //UA_LOG_I/NFO(UA_Log_Stdout, UA_LOGCATEGORY_USERLAND, "date is: %u-%u-%u %u:%u:%u.%03u\n",
-                   //  dts.day, dts.month, dts.year, dts.hour, dts.min, dts.sec, dts.milliSec);
-      //  std::cout << "read from server is : " << ReadValue << std::endl;
-   // }
-
-    /* Clean up */
-   // UA_Variant_deleteMembers(&value);
-    //UA_Client_delete(client); /* Disconnects the client internally */
-
-
-
-
 
     /* Define some production data dummy structure*/
     ProductionData ProdData;
-    int16_t DataToWrite = 0;
+    /* Clear defined data structure */
+    ProdData.ClearData();
 
-
-
-    /* Definie write object*/
+    /* Definie PLC write object*/
     WriteDataToPLC PLC;
 
     /* Initialize server connection */
     std::cout << "\PLC.InitOpcUaServerConnection() function starting: ";
     PLC.InitOpcUaServerConnection(SERVER_ADRESS);
 
-    /* Get from user data to write */
-   // std::cout << "\nType some integer value: ";
-    //std::cin >> DataToWrite;
-    std::cout << "\nPLC.Write() function starting: ";
-    PLC.Write(ProdData);
+    /* Testing decision loop */
+    int TestUserDecision = 0;
 
-    std::cout << "\nPLC.CleanUp() function starting: ";
-    PLC.CleanUp();
+    while (TestUserDecision != 999) {
+        std::cout << "\n 1. Write test data to PLC \n2. Clear data on PLC \nDecision: ";
+        std::cin >> TestUserDecision;
 
+        /* Write test production data to PLC (Simulation of start production batch) */
+        if (TestUserDecision == 1) {
+            ProdData.TestInputData();
+            PLC.Write(ProdData);
+            PLC.CleanUp();
+        }
 
+        /* Clear data on PLC (simulation of end production data batch) */
+        if (TestUserDecision == 2) {
+            ProdData.ClearData();
+            PLC.Write(ProdData);
+            PLC.CleanUp();
+        }
+    }
 
     system("pause");
     return 0;
