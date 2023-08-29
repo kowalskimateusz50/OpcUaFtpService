@@ -11,7 +11,7 @@ struct ProductionData {
 	std::string ProductionItemEan;
 	std::string ProductionItemSku;
 	std::string ProductionBatchNo;
-
+																	
 	void TestInputData(); /* Inputing some test production data to structure */
 	void ClearData(); /* Clear production data wchich means set empty strings and 0 quantities */
 };

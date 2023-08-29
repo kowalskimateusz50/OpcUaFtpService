@@ -63,6 +63,8 @@ int WriteDataToPLC::Write(ProductionData& Data) {
     int ret; /* Error code handler */
 
     /*------------------- Write Work order number -------------------------------*/
+    std::cout << "\nAttempt to write Work order number: " << Data.WorkOrderNumber << " String length: " << Data.WorkOrderNumber.length() << std::endl;
+
     UA_String UaWorkOrderNo; /* Write string variable */
     UA_Variant WorkOrderNoValue; /* Variants can hold scalar values and arrays of any type */
 
@@ -76,9 +78,11 @@ int WriteDataToPLC::Write(ProductionData& Data) {
     ret = UA_Client_writeValueAttribute(client, WorkOrderNoNodeId, &WorkOrderNoValue);
 
     std::cout << "\nLOG: Work order number write result: " << (int)ret << std::endl;
-    UA_Variant_deleteMembers(&WorkOrderNoValue);
+    //UA_Variant_deleteMembers(&WorkOrderNoValue); TODO: Repair this function
 
     /*------------------- Write Porduction line number ----------------*/
+    std::cout << "\nAttempt to write prod line number: " << Data.ProductionLineNumber << " String length: " << Data.ProductionLineNumber.length() << std::endl;
+
     UA_String UaProdLineNo; /* Write string variable */
     UA_Variant ProdLineNoValue; /* Variants can hold scalar values and arrays of any type */
 
@@ -92,9 +96,10 @@ int WriteDataToPLC::Write(ProductionData& Data) {
     ret = UA_Client_writeValueAttribute(client, ProdLineNoNodeId, &ProdLineNoValue);
 
     std::cout << "\nLOG: Prod line number write result: " << (int)ret << std::endl;
-    UA_Variant_deleteMembers(&ProdLineNoValue);
+    //UA_Variant_deleteMembers(&ProdLineNoValue); TODO: Repair this function
 
     /*------------------- Write Porduction item ean ----------------*/
+    std::cout << "\nAttempt to write prod item ean: " << Data.ProductionItemEan << " String length: " << Data.ProductionItemEan.length() << std::endl;
     UA_String UaProdItemEan; /* Write string variable */
     UA_Variant ProdItemEanValue; /* Variants can hold scalar values and arrays of any type */
 
@@ -108,10 +113,10 @@ int WriteDataToPLC::Write(ProductionData& Data) {
     ret = UA_Client_writeValueAttribute(client, ProdItemEanNodeId, &ProdItemEanValue);
 
     std::cout << "\nLOG: Prod line item ean write result: " << (int)ret << std::endl;
-    UA_Variant_deleteMembers(&ProdItemEanValue);
-    return ret;
+    //UA_Variant_deleteMembers(&ProdItemEanValue); TODO: Repair this function
 
     /*------------------- Write Porduction item sku ----------------*/
+    std::cout << "\nAttempt to write prod item sku: " << Data.ProductionItemSku << " String length: " << Data.ProductionItemSku.length() << std::endl;
     UA_String UaProdItemSku; /* Write string variable */
     UA_Variant ProdItemSkuValue; /* Variants can hold scalar values and arrays of any type */
 
@@ -125,9 +130,11 @@ int WriteDataToPLC::Write(ProductionData& Data) {
     ret = UA_Client_writeValueAttribute(client, ProdItemSkuNodeId, &ProdItemSkuValue);
 
     std::cout << "\nLOG: Prod line item sku write result: " << (int)ret << std::endl;
-    UA_Variant_deleteMembers(&ProdItemSkuValue);
+    //UA_Variant_deleteMembers(&ProdItemSkuValue); TODO: Repair this function
 
     /*------------------- Write Porduction batch number ----------------*/
+    std::cout << "\nAttempt to write prod batch number: " << Data.ProductionBatchNo << " String length: " << Data.ProductionBatchNo.length() << std::endl;
+
     UA_String UaProdBatchNo; /* Write string variable */
     UA_Variant ProdBatchNoValue; /* Variants can hold scalar values and arrays of any type */
 
@@ -141,21 +148,23 @@ int WriteDataToPLC::Write(ProductionData& Data) {
     ret = UA_Client_writeValueAttribute(client, ProdBatchNoNodeId, &ProdBatchNoValue);
 
     std::cout << "\nLOG: Prod batch number write result: " << (int)ret << std::endl;
-    UA_Variant_deleteMembers(&ProdBatchNoValue);
+    //UA_Variant_deleteMembers(&ProdBatchNoValue); TODO: Repair this function
 
     /*------------------- Write Work order quantity --------------*/
-    UA_Int16 UaWorkOrderQuantity; /* Write string variable */
+    std::cout << "\nAttempt to write prod batch number: " << Data.WorkOrderQuantity << std::endl;
+
+    UA_Int16 UaWorkOrderQuantity = (UA_Int16)(Data.WorkOrderQuantity); /* Write string variable */
     UA_Variant WorkOrderQuantityValue; /* Variants can hold scalar values and arrays of any type */
 
     UA_Variant_init(&WorkOrderQuantityValue);
     UA_Variant_setScalar(&WorkOrderQuantityValue, &UaWorkOrderQuantity, &UA_TYPES[UA_TYPES_INT16]);
 
     /* NodeId of the variable holding the production item sku */
-    const UA_NodeId WorkOrderQuantityId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"BatchNo\"");
+    const UA_NodeId WorkOrderQuantityId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"WorkOrderQuantity\"");
     ret = UA_Client_writeValueAttribute(client, WorkOrderQuantityId, &WorkOrderQuantityValue);
 
     std::cout << "\nLOG: Work order quantity write result: " << (int)ret << std::endl;
-    UA_Variant_deleteMembers(&WorkOrderQuantityValue);
+    //UA_Variant_deleteMembers(&WorkOrderQuantityValue); TODO: Repair this function
 
     return ret;
 }

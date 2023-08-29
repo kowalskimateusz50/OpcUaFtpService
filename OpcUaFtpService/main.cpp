@@ -10,8 +10,6 @@
 #include "ProductionData.hpp"
 #include "WriteDataToPLC.hpp"
 
-
-
 /* Define Server Adress(TODO: as loadable parameter)*/
 #define SERVER_ADRESS "opc.tcp://192.168.10.10:4840"
 
@@ -40,16 +38,16 @@ int main(void) {
         if (TestUserDecision == 1) {
             ProdData.TestInputData();
             PLC.Write(ProdData);
-            PLC.CleanUp();
         }
 
         /* Clear data on PLC (simulation of end production data batch) */
         if (TestUserDecision == 2) {
             ProdData.ClearData();
             PLC.Write(ProdData);
-            PLC.CleanUp();
         }
     }
+    /* Clean Up after OPC UA connections */
+    PLC.CleanUp();
 
     system("pause");
     return 0;
