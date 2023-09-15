@@ -1,54 +1,69 @@
 #pragma warning(disable : 4996)
-
-#include <stdio.h>
-#include "open62541.h"
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
-#include <windows.h>
-#include <wininet.h>
-#include <tchar.h>
-#include <string.h>
+#include <thread>
+#include <mutex>
+
+#include "FtpThreadListening.hpp"
 #include "ProductionData.hpp"
+#include "DataChangesOnFtpControl.hpp"
+#include "Logging.hpp"
+#include "Parameters.hpp"
 #include "WriteDataToPLC.hpp"
 
-/* Define Server Adress(TODO: as loadable parameter)*/
-#define SERVER_ADRESS "opc.tcp://192.168.10.10:4840"
+int main()
+{
+	std::mutex Mlock;
 
-int main(void) {
+	/* Create general program folder */
+		/* Create new local folder if doesn't exist */
+	if (CreateDirectory(ROOT_PATH, NULL) ||
+		ERROR_ALREADY_EXISTS == GetLastError())
+	{
+		if (ERROR_ALREADY_EXISTS != GetLastError())
+		{
+			cout << "\nLog: New folder created: " << ROOT_PATH;
+		}
+	}
+	else
+	{
+		cout << "\nLog: Fail during folder creation";
+	}
+	/* Declare object responsible for writing data on PLC */
+	WriteDataToPLC PLC;
 
-    /* Define some production data dummy structure*/
-    ProductionData ProdData;
-    /* Clear defined data structure */
-    ProdData.ClearData();
+	/* Declare production data structure instance wchich is receiving from GD machine */
+	ProductionData ProductionBatchFromGD, ProductionBatchOnPlc;
 
-    /* Definie PLC write object*/
-    WriteDataToPLC PLC;
+	/* Create text file logging object */
+	LoggingToTextFile MessageFile(LOGGING_PATH);
 
-    /* Initialize server connection */
-    std::cout << "\PLC.InitOpcUaServerConnection() function starting: ";
-    PLC.InitOpcUaServerConnection(SERVER_ADRESS);
+	/* Log print Examples */
+	MessageFile.AppendLog("Program is starting",M_INFO);
 
-    /* Testing decision loop */
-    int TestUserDecision = 0;
+	/* Clear Declared Production Data */
+	ProductionBatchFromGD.ClearData();
+	ProductionBatchOnPlc.ClearData();
 
-    while (TestUserDecision != 999) {
-        std::cout << "\n 1. Write test data to PLC \n2. Clear data on PLC \nDecision: ";
-        std::cin >> TestUserDecision;
+	//this_thread::sleep_for(50000ms);
 
-        /* Write test production data to PLC (Simulation of start production batch) */
-        if (TestUserDecision == 1) {
-            ProdData.TestInputData();
-            PLC.Write(ProdData);
-        }
+	/* Create FTP Read Production Thread */
+	std::thread FtpListener(FtpListeningThread, std::ref(ProductionBatchFromGD), std::ref(Mlock), std::ref(MessageFile));
 
-        /* Clear data on PLC (simulation of end production data batch) */
-        if (TestUserDecision == 2) {
-            ProdData.ClearData();
-            PLC.Write(ProdData);
-        }
-    }
-    /* Clean Up after OPC UA connections */
-    PLC.CleanUp();
+	/* Endless loop for testing */
+	while (true)
+	/* Detecting changes on input from FTP */
+	{
+		Mlock.lock();
+		DetectDataChangesOnFtp(ProductionBatchFromGD, ProductionBatchOnPlc, MessageFile, PLC);
+		Mlock.unlock();
 
-    system("pause");
-    return 0;
+		//this_thread::sleep_for(5000ms);
+	}
+
+	/* Wait for end thred jobs */
+	FtpListener.join();
+
+	return 0;
+
 }

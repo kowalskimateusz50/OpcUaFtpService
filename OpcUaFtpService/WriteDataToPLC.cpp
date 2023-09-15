@@ -58,7 +58,11 @@ void WriteDataToPLC::StringToUAString(std::string& StrToConvert, UA_String& StrC
     StrConverted.data = ConvertByteArray;
 }
 
-int WriteDataToPLC::Write(ProductionData& Data) {
+int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress) {
+
+    /* Initialize server connection */
+    std::cout << "\LOG: InitOpcUaServerConnection function starting with server adress: " << ServerAdress;
+    InitOpcUaServerConnection(ServerAdress);
 
     int ret; /* Error code handler */
 
@@ -165,6 +169,9 @@ int WriteDataToPLC::Write(ProductionData& Data) {
 
     std::cout << "\nLOG: Work order quantity write result: " << (int)ret << std::endl;
     //UA_Variant_deleteMembers(&WorkOrderQuantityValue); TODO: Repair this function
+
+    /* Clean Up after OPC UA connections */
+    CleanUp();
 
     return ret;
 }
