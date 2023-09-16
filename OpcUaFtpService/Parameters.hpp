@@ -1,6 +1,6 @@
 #pragma once
 /* Server parameters */
-#define SERVER_IP_ADRESS L"192.168.10.228"
+#define SERVER_IP_ADRESS L"192.168.10.229"
 #define SERVER_USERNAME L"admin"
 #define SERVER_PASSWORD L"admin"
 #define SERVER_PATH L"/"

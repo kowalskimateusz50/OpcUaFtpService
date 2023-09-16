@@ -7,7 +7,10 @@
 * @param: string server adress 
 * @return: Server initialization status code 
 */
-int WriteDataToPLC::InitOpcUaServerConnection(std::string ServerAdress) {
+int WriteDataToPLC::InitOpcUaServerConnection(std::string ServerAdress, LoggingToTextFile& MessageFile) {
+
+    MessageFile.AppendLog("InitOpcUaServerConnection function starting with server adress: " + ServerAdress, M_INFO);
+
     /* Convert server adress to c_tring */
     char* CstrServerAdress = new char[ServerAdress.length() + 1];
     strcpy_s(CstrServerAdress, ServerAdress.length() + 1, ServerAdress.c_str());
@@ -17,15 +20,20 @@ int WriteDataToPLC::InitOpcUaServerConnection(std::string ServerAdress) {
     UA_StatusCode retval = UA_Client_connect(client, CstrServerAdress);
 
     /* Check server connection status */
-    if (retval != UA_STATUSCODE_GOOD) {
+    if (retval != UA_STATUSCODE_GOOD) 
+    {
         UA_Client_delete(client);
-        std::cout << "\nLog: OpcUa Server connection initialization failed code: " << (int)retval;
+       // std::cout << "\nLog: OpcUa Server connection initialization failed code: " << (int)retval;
+        MessageFile.AppendLog("InitOpcUaServerConnection function starting with server adress: " + to_string((int)retval), M_ERROR);
+
         /* Save server connection status */
         ServerConnectionStatus = (int)retval;
         return (int)retval;
     }
-    else {
-        std::cout << "\nLog: OpcUa Server connection initialization successful: ";
+    else 
+    {
+        //std::cout << "\nLog: OpcUa Server connection initialization successful: ";
+        MessageFile.AppendLog("OpcUa Server connection initialization successful", M_INFO);
     }
     /* Save server connection status */
     ServerConnectionStatus = (int)retval;
@@ -58,16 +66,17 @@ void WriteDataToPLC::StringToUAString(std::string& StrToConvert, UA_String& StrC
     StrConverted.data = ConvertByteArray;
 }
 
-int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress) {
+int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress, LoggingToTextFile& MessageFile) {
 
     /* Initialize server connection */
-    std::cout << "\LOG: InitOpcUaServerConnection function starting with server adress: " << ServerAdress;
-    InitOpcUaServerConnection(ServerAdress);
+    //std::cout << "\LOG: InitOpcUaServerConnection function starting with server adress: " << ServerAdress;
+    InitOpcUaServerConnection(ServerAdress, MessageFile);
 
     int ret; /* Error code handler */
 
     /*------------------- Write Work order number -------------------------------*/
-    std::cout << "\nAttempt to write Work order number: " << Data.WorkOrderNumber << " String length: " << Data.WorkOrderNumber.length() << std::endl;
+    //std::cout << "\nAttempt to write Work order number: " << Data.WorkOrderNumber << " String length: " << Data.WorkOrderNumber.length() << std::endl;
+    MessageFile.AppendLog("Attempt to write Work order number: " + Data.WorkOrderNumber, M_INFO);
 
     UA_String UaWorkOrderNo; /* Write string variable */
     UA_Variant WorkOrderNoValue; /* Variants can hold scalar values and arrays of any type */
@@ -81,11 +90,14 @@ int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress) {
     const UA_NodeId WorkOrderNoNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"WorkOrderNo\"");
     ret = UA_Client_writeValueAttribute(client, WorkOrderNoNodeId, &WorkOrderNoValue);
 
-    std::cout << "\nLOG: Work order number write result: " << (int)ret << std::endl;
+    //std::cout << "\nLOG: Work order number write result: " << (int)ret << std::endl;
+    MessageFile.AppendLog("Work order number write result: " + to_string((int)ret), M_INFO);
+
     //UA_Variant_deleteMembers(&WorkOrderNoValue); TODO: Repair this function
 
     /*------------------- Write Porduction line number ----------------*/
-    std::cout << "\nAttempt to write prod line number: " << Data.ProductionLineNumber << " String length: " << Data.ProductionLineNumber.length() << std::endl;
+    //std::cout << "\nAttempt to write prod line number: " << Data.ProductionLineNumber << " String length: " << Data.ProductionLineNumber.length() << std::endl;
+    MessageFile.AppendLog("Attempt to write prod line number: " + Data.ProductionLineNumber, M_INFO);
 
     UA_String UaProdLineNo; /* Write string variable */
     UA_Variant ProdLineNoValue; /* Variants can hold scalar values and arrays of any type */
@@ -99,11 +111,14 @@ int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress) {
     const UA_NodeId ProdLineNoNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"ProductionLineNumber\"");
     ret = UA_Client_writeValueAttribute(client, ProdLineNoNodeId, &ProdLineNoValue);
 
-    std::cout << "\nLOG: Prod line number write result: " << (int)ret << std::endl;
+    //std::cout << "\nLOG: Prod line number write result: " << (int)ret << std::endl;
+    MessageFile.AppendLog("Prod line number write result: " + to_string((int)ret), M_INFO);
+
     //UA_Variant_deleteMembers(&ProdLineNoValue); TODO: Repair this function
 
     /*------------------- Write Porduction item ean ----------------*/
-    std::cout << "\nAttempt to write prod item ean: " << Data.ProductionItemEan << " String length: " << Data.ProductionItemEan.length() << std::endl;
+    //std::cout << "\nAttempt to write prod item ean: " << Data.ProductionItemEan << " String length: " << Data.ProductionItemEan.length() << std::endl;
+    MessageFile.AppendLog("Attempt to write prod item ean: " + Data.ProductionItemEan, M_INFO);
     UA_String UaProdItemEan; /* Write string variable */
     UA_Variant ProdItemEanValue; /* Variants can hold scalar values and arrays of any type */
 
@@ -116,11 +131,13 @@ int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress) {
     const UA_NodeId ProdItemEanNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"EAN\"");
     ret = UA_Client_writeValueAttribute(client, ProdItemEanNodeId, &ProdItemEanValue);
 
-    std::cout << "\nLOG: Prod line item ean write result: " << (int)ret << std::endl;
+    //std::cout << "\nLOG: Prod line item ean write result: " << (int)ret << std::endl;
+    MessageFile.AppendLog("Prod line item ean write result: " + to_string((int)ret), M_INFO);
     //UA_Variant_deleteMembers(&ProdItemEanValue); TODO: Repair this function
 
     /*------------------- Write Porduction item sku ----------------*/
-    std::cout << "\nAttempt to write prod item sku: " << Data.ProductionItemSku << " String length: " << Data.ProductionItemSku.length() << std::endl;
+    //std::cout << "\nAttempt to write prod item sku: " << Data.ProductionItemSku << " String length: " << Data.ProductionItemSku.length() << std::endl;
+    MessageFile.AppendLog("Attempt to write prod item sku: " + Data.ProductionItemSku, M_INFO);
     UA_String UaProdItemSku; /* Write string variable */
     UA_Variant ProdItemSkuValue; /* Variants can hold scalar values and arrays of any type */
 
@@ -133,11 +150,13 @@ int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress) {
     const UA_NodeId ProdItemSkuNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"SKU_code\"");
     ret = UA_Client_writeValueAttribute(client, ProdItemSkuNodeId, &ProdItemSkuValue);
 
-    std::cout << "\nLOG: Prod line item sku write result: " << (int)ret << std::endl;
+    //std::cout << "\nLOG: Prod line item sku write result: " << (int)ret << std::endl;
+    MessageFile.AppendLog("Prod line item sku write result: " + to_string((int)ret), M_INFO);
     //UA_Variant_deleteMembers(&ProdItemSkuValue); TODO: Repair this function
 
     /*------------------- Write Porduction batch number ----------------*/
-    std::cout << "\nAttempt to write prod batch number: " << Data.ProductionBatchNo << " String length: " << Data.ProductionBatchNo.length() << std::endl;
+    //std::cout << "\nAttempt to write prod batch number: " << Data.ProductionBatchNo << " String length: " << Data.ProductionBatchNo.length() << std::endl;
+    MessageFile.AppendLog("Attempt to write prod batch number: " + Data.ProductionBatchNo, M_INFO);
 
     UA_String UaProdBatchNo; /* Write string variable */
     UA_Variant ProdBatchNoValue; /* Variants can hold scalar values and arrays of any type */
@@ -151,11 +170,14 @@ int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress) {
     const UA_NodeId ProdBatchNoNodeId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"BatchNo\"");
     ret = UA_Client_writeValueAttribute(client, ProdBatchNoNodeId, &ProdBatchNoValue);
 
-    std::cout << "\nLOG: Prod batch number write result: " << (int)ret << std::endl;
+    //std::cout << "\nLOG: Prod batch number write result: " << (int)ret << std::endl;
+    MessageFile.AppendLog("Prod batch number write result: " + to_string((int)ret), M_INFO);
+
     //UA_Variant_deleteMembers(&ProdBatchNoValue); TODO: Repair this function
 
     /*------------------- Write Work order quantity --------------*/
-    std::cout << "\nAttempt to write prod batch number: " << Data.WorkOrderQuantity << std::endl;
+    //std::cout << "\nAttempt to write work order quantity: " << Data.WorkOrderQuantity << std::endl;
+    MessageFile.AppendLog("Attempt to write work order quantity: " + Data.WorkOrderQuantity, M_INFO);
 
     UA_Int16 UaWorkOrderQuantity = (UA_Int16)(Data.WorkOrderQuantity); /* Write string variable */
     UA_Variant WorkOrderQuantityValue; /* Variants can hold scalar values and arrays of any type */
@@ -167,7 +189,9 @@ int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress) {
     const UA_NodeId WorkOrderQuantityId = UA_NODEID_STRING(3, (char*)"\"ProductionData\".\"ProductionData\".\"WorkOrderQuantity\"");
     ret = UA_Client_writeValueAttribute(client, WorkOrderQuantityId, &WorkOrderQuantityValue);
 
-    std::cout << "\nLOG: Work order quantity write result: " << (int)ret << std::endl;
+    //std::cout << "\nLOG: Work order quantity write result: " << (int)ret << std::endl;
+    MessageFile.AppendLog("Work order quantity write result: " + to_string((int)ret), M_INFO);
+
     //UA_Variant_deleteMembers(&WorkOrderQuantityValue); TODO: Repair this function
 
     /* Clean Up after OPC UA connections */
@@ -182,7 +206,8 @@ int WriteDataToPLC::Write(ProductionData& Data, std::string ServerAdress) {
 * @return: NULL
 */
 
-void WriteDataToPLC::CleanUp(){
+void WriteDataToPLC::CleanUp()
+{
     UA_Client_delete(client);
 }
 
