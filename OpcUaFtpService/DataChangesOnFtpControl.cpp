@@ -13,8 +13,14 @@ void DetectDataChangesOnFtp(ProductionData& ProductionBatchFromGD, ProductionDat
 		MessageFile.AppendLog(ProductionBatchOnPlc.PrintDataToFile(), M_INFO);
 
 		/* Write data to PLC */
-		PLC.Write(ProductionBatchOnPlc, OPC_SERVER_ADRESS, MessageFile);
-		MessageFile.AppendLog("Data has been written to PLC", M_INFO);
+		if (PLC.Write(ProductionBatchOnPlc, OPC_SERVER_ADRESS, MessageFile))
+		{
+			MessageFile.AppendLog("Data has not been written to PLC", M_ERROR);
+		}
+		else
+		{
+			MessageFile.AppendLog("Data has been written to PLC", M_INFO);
+		}
 	}
 	else if (ProductionBatchFromGD.IsEmpty() == 1 && ProductionBatchOnPlc.IsEmpty() == 0)
 	{
@@ -25,7 +31,13 @@ void DetectDataChangesOnFtp(ProductionData& ProductionBatchFromGD, ProductionDat
 		MessageFile.AppendLog(ProductionBatchOnPlc.PrintDataToFile(), M_INFO);
 
 		/* Write data to PLC */
-		PLC.Write(ProductionBatchOnPlc, OPC_SERVER_ADRESS, MessageFile);
-		MessageFile.AppendLog("Data has been written to PLC", M_INFO);
+		if (PLC.Write(ProductionBatchOnPlc, OPC_SERVER_ADRESS, MessageFile))
+		{
+			MessageFile.AppendLog("Data has not been written to PLC", M_ERROR);
+		}
+		else
+		{
+			MessageFile.AppendLog("Data has been written to PLC", M_INFO);
+		}
 	}
 }
