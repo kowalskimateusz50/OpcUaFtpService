@@ -24,7 +24,7 @@ int FtpReadProductionData::InitFtpConnection(LPCWSTR iServerAdress, LPCWSTR iSer
 	if (hInternet == NULL)
 	{
 		//cout << "\nError during opening connection: " << GetLastError();
-		MessageFile.AppendLog("Connection opening failed" + to_string(GetLastError()), M_ERROR);
+		MessageFile.AppendLog("Connection opening failed: " + to_string(GetLastError()), M_ERROR);
 		return GetLastError();
 	}
 	else
@@ -36,7 +36,7 @@ int FtpReadProductionData::InitFtpConnection(LPCWSTR iServerAdress, LPCWSTR iSer
 		if (hFtpSession == NULL)
 		{
 			//cout << "Error during opening connection with FTP server: " << GetLastError();
-			MessageFile.AppendLog("FTP Connection opening failed" + to_string(GetLastError()), M_ERROR);
+			MessageFile.AppendLog("FTP Connection opening failed: " + to_string(GetLastError()), M_ERROR);
 			return GetLastError();
 		}
 		else
